@@ -1,0 +1,14 @@
+{
+  "name": "react-native-swipeable-element",
+  "version": "0.1.0",
+  "description": "",
+  "main": "SwipeableElement.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Josh Levine",
+  "license": "MIT",
+  "dependencies": {
+    "react-native": "^0.3.4"
+  }
+}
