@@ -56,7 +56,10 @@ var SwipeableElement = React.createClass({
     if (!this.mainElement) {
       return;
     }
+    // The dx value where the gesture should "fire"
+    var activationPoint = 75;
     var dx;
+    var direction = gestureState.dx > 0 ? 'right' : 'left';
     if (gestureState.dx < -150) {
       dx = -150;
     } else if (gestureState.dx > 150) {
@@ -65,15 +68,30 @@ var SwipeableElement = React.createClass({
       dx = gestureState.dx;
     }
 
+    var absdx = dx > 0 ? dx : -dx;
+    var opacity = (absdx / 75) * 1;
+
     this.mainElement.setNativeProps({ left: dx });
     if (gestureState.dx > 0) {
-      this.leftElement.setNativeProps({ width: dx*2, left: dx });
+      this.leftElement.setNativeProps({ width: dx*2, left: dx, opacity });
     } else {
-      this.rightElement.setNativeProps({ width: -dx*2, right: -dx });
+      this.rightElement.setNativeProps({ width: -dx*2, right: -dx, opacity });
     }
+
+    this.setState({ dx });
   },
 
   _handlePanResponderEnd: function() {
+    if (this.state.dx > 75) {
+      if (this.props.onSwipeRight) {
+        this.props.onSwipeRight.call();
+      }
+    } else if (this.state.dx < -75) {
+      if (this.props.onSwipeLeft) {
+        this.props.onSwipeLeft.call();
+      }
+    }
+    this.setState({dx:0,});
     this.mainElement && this.mainElement.setNativeProps({ left: 0 });
     this.leftElement && this.leftElement.setNativeProps({ width: 0 });
     this.rightElement && this.rightElement.setNativeProps({ width: 0 });
