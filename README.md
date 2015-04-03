@@ -1,5 +1,7 @@
 ## Swipeable Element for React Native
-Experimental element that can be swiped left or right to perform different actions.
+Experimental element that can be swiped left or right to perform different actions. This is still a major work in progress.
+
+![](http://i.imgur.com/dI2njZH.gif)
 
 ### Usage
 ```
