@@ -16,9 +16,13 @@ var MyComponent = React.createClass({
     return (
       <ScrollView style={{flex: 1,}}>
         <SwipeableElement
-          component={<Text>{'Some Text'}</Text>}
+          compnent={<Text>{'Some Text'}</Text>}
           swipeRightTitle={'Delete'}
+          swipeRightTextColor={'#FFFFFF'}
+          swipeRightBackgroundColor={'#000000'}
           swipeLeftTitle={'Archive'}
+          swipeLeftTextColor={'#FFFFFF'}
+          swipeLeftBackgroundColor={'#FF0000'}
           onSwipeRight={() => {
             // Handle swipe
           }}

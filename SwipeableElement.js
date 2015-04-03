@@ -31,13 +31,21 @@ var styles = StyleSheet.create({
     backgroundColor: '#FF0000',
     alignItems: 'flex-start',
     justifyContent:'center',
-    //alignSelf: 'flex-start',
   },
   swipeableRight: {
     overflow: 'hidden',
     width: 0,
     alignItems: 'flex-end',
     backgroundColor: '#0000FF',
+  },
+  leftText: {
+    color:'#FFFFFF',
+    padding:10,
+    alignSelf:'center',
+  },
+  rightText: {
+    color:'#FFFFFF',
+    padding:10,
   }
 });
 
@@ -56,10 +64,10 @@ var SwipeableElement = React.createClass({
   _handlePanResponderGrant: function() {},
 
   _handlePanResponderMove: function(e, gestureState) {
-    if (!this.mainElement) {
+    if (!this.refs.mainElement) {
       return;
     }
-    // The dx value where the gesture should "fire"
+
     var dx;
     var direction = gestureState.dx > 0 ? 'right' : 'left';
     if (gestureState.dx < -150) {
@@ -79,15 +87,15 @@ var SwipeableElement = React.createClass({
 
     var props = { width: absdx*2, opacity, };
 
-    this.mainElement.setNativeProps({ left: dx });
+    this.refs.mainElement.setNativeProps({ left: dx });
     if (dx > 0) {
-      element = this.leftElement;
+      element = this.refs.leftElement;
       props.left = absdx;
-      text = this.refs.textLeft;
+      text = this.refs.leftText;
     } else {
-      element = this.rightElement;
+      element = this.refs.rightElement;
       props.right = absdx;
-      text = this.refs.textRight;
+      text = this.refs.rightText;
     }
     text.setNativeProps({ fontSize, paddingTop });
     element.setNativeProps(props);
@@ -108,12 +116,14 @@ var SwipeableElement = React.createClass({
     var animations = require('../../TaskList/animations');
     LayoutAnimation.configureNext(animations.easeInEaseOut);
     this.setState({dx:0,});
-    this.mainElement && this.mainElement.setNativeProps({ left: 0 });
-    this.leftElement && this.leftElement.setNativeProps({ width: 0, left: 0, });
-    this.rightElement && this.rightElement.setNativeProps({ width: 0, right: 0,});
+    this.refs.mainElement && this.refs.mainElement.setNativeProps({ left: 0 });
+    this.refs.leftElement && this.refs.leftElement.setNativeProps({ width: 0, left: 0, });
+    this.refs.rightElement && this.refs.rightElement.setNativeProps({ width: 0, right: 0,});
+    // Reset the left/right values after the animation finishes
+    // This feels hacky and I hope there's a better way to do this
     setTimeout(() => {
-      this.leftElement && this.leftElement.setNativeProps({ left: null });
-      this.rightElement && this.rightElement.setNativeProps({ right: null });
+      this.refs.leftElement && this.refs.leftElement.setNativeProps({ left: null });
+      this.refs.rightElement && this.refs.rightElement.setNativeProps({ right: null });
     }, 300);
   },
 
@@ -126,11 +136,6 @@ var SwipeableElement = React.createClass({
       onPanResponderRelease: this._handlePanResponderEnd,
       onPanResponderTerminate: this._handlePanResponderEnd,
     });
-
-    this.mainElement = (null : ?React.Element);
-    this.leftElement = (null : ?React.Element);
-    this.rightElement = (null : ?React.Element);
-    this.panX = 0;
   },
 
   getInitialState: function() {
@@ -142,28 +147,38 @@ var SwipeableElement = React.createClass({
       'Release' :
       'Pull';
 
+    var rightTextStyle = this.props.swipeLeftTextColor ?
+      [styles.rightText, {color: this.props.swipeLeftTextColor,}] :
+      styles.rightText;
+
+    var leftTextStyle = this.props.swipeRightTextColor ?
+      [styles.leftText, {color: this.props.swipeRightTextColor,}] :
+      styles.leftText;
+
+    var rightElementStyle = this.props.swipeLeftBackgroundColor ?
+      [styles.swipeableLeft, {backgroundColor: this.props.swipeLeftBackgroundColor}] :
+      styles.swipeableLeft;
+
+    var leftElementStyle = this.props.swipeRightBackgroundColor ?
+      [styles.swipeableRight, {backgroundColor: this.props.swipeRightBackgroundColor}] :
+      styles.swipeableRight;
+
     return (
       <View style={styles.swipeableElementWrapper}>
-        <View ref={(element) => {
-            this.leftElement = element;
-          }} style={styles.swipeableRight}>
+        <View ref={'leftElement'} style={leftElementStyle}>
           <View style={{width:300,flexDirection:'row',}}>
             <View style={{flex:1,}}></View>
-            <Text ref={'textLeft'} style={{color:'#FFFFFF',padding:10,alignSelf:'center',}}>
+            <Text ref={'leftText'} style={leftTextStyle}>
               {pullOrRelease} to {this.props.swipeRightTitle}
             </Text>
           </View>
         </View>
-        <View ref={(element) => {
-            this.mainElement = element;
-          }} style={styles.swipeableMain} {...this._panResponder.panHandlers}>
+        <View ref={'mainElement'} style={styles.swipeableMain} {...this._panResponder.panHandlers}>
           {this.props.component}
         </View>
-        <View ref={(element) => {
-            this.rightElement = element;
-          }} style={styles.swipeableLeft}>
+        <View ref={'rightElement'} style={rightElementStyle}>
           <View style={{width:300,overflow:'hidden'}}>
-            <Text ref={'textRight'} style={{color:'#FFFFFF',padding:10,}}>{pullOrRelease} to {this.props.swipeLeftTitle}</Text>
+            <Text ref={'rightText'} style={rightTextStyle}>{pullOrRelease} to {this.props.swipeLeftTitle}</Text>
           </View>
         </View>
       </View>
