@@ -26,11 +26,13 @@ var styles = StyleSheet.create({
     overflow: 'hidden',
     width: 0,
     backgroundColor: '#FF0000',
+    alignItems: 'flex-start',
     //alignSelf: 'flex-start',
   },
   swipeableRight: {
     overflow: 'hidden',
     width: 0,
+    alignItems: 'flex-end',
     //alignSelf: 'flex-end',
     backgroundColor: '#0000FF',
   }
@@ -51,13 +53,9 @@ var SwipeableElement = React.createClass({
   _handlePanResponderGrant: function() {},
 
   _handlePanResponderMove: function(e, gestureState) {
-    //this.panX = this._previousLeft + gestureState.dx;
-    //this._circleStyles.top = this._previousTop + gestureState.dy;
-    //this._updatePosition();
     if (!this.mainElement) {
       return;
     }
-    console.log(gestureState.dx);
     var dx;
     if (gestureState.dx < -150) {
       dx = -150;
@@ -94,7 +92,6 @@ var SwipeableElement = React.createClass({
     this.leftElement = (null : ?React.Element);
     this.rightElement = (null : ?React.Element);
     this.panX = 0;
-    this.test = 'Test';
   },
 
   render: function() {
@@ -103,20 +100,21 @@ var SwipeableElement = React.createClass({
         <View ref={(element) => {
             this.leftElement = element;
           }} style={styles.swipeableRight}>
-            <View style={{width:300}}>
-              <Text style={{color:'#FFFFFF'}}>White</Text>
-            </View>
+          <View style={{width:300,flexDirection:'row'}}>
+            <View style={{flex:1,backgroundColor:'#0000FF',}}></View>
+            <Text style={{color:'#FFFFFF'}}>{this.props.swipeRightTitle}</Text>
           </View>
+        </View>
         <View ref={(element) => {
             this.mainElement = element;
           }} style={styles.swipeableMain} {...this._panResponder.panHandlers}>
-          <Text>{'Hello World'}</Text>
+          {this.props.component}
         </View>
         <View ref={(element) => {
             this.rightElement = element;
           }} style={styles.swipeableLeft}>
-          <View style={{width:300}}>
-            <Text style={{color:'#FFFFFF'}}>White</Text>
+          <View style={{width:300,overflow:'hidden'}}>
+            <Text style={{color:'#FFFFFF'}}>{this.props.swipeLeftTitle}</Text>
           </View>
         </View>
       </View>
