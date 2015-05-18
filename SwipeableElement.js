@@ -113,8 +113,7 @@ var SwipeableElement = React.createClass({
         this.props.onSwipeLeft.call();
       }
     }
-    var animations = require('../../TaskList/animations');
-    LayoutAnimation.configureNext(animations.easeInEaseOut);
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     this.setState({dx:0,});
     this.refs.mainElement && this.refs.mainElement.setNativeProps({ left: 0 });
     this.refs.leftElement && this.refs.leftElement.setNativeProps({ width: 0, left: 0, });
